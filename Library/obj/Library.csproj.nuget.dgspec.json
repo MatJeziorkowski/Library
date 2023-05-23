@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "/home/matuesz/Desktop/C#/Library/Library/Library.csproj": {}
+    "C:\\Users\\Mateusz\\Desktop\\Project\\Library\\Library\\Library.csproj": {}
   },
   "projects": {
-    "/home/matuesz/Desktop/C#/Library/Library/Library.csproj": {
+    "C:\\Users\\Mateusz\\Desktop\\Project\\Library\\Library\\Library.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/home/matuesz/Desktop/C#/Library/Library/Library.csproj",
+        "projectUniqueName": "C:\\Users\\Mateusz\\Desktop\\Project\\Library\\Library\\Library.csproj",
         "projectName": "Library",
-        "projectPath": "/home/matuesz/Desktop/C#/Library/Library/Library.csproj",
-        "packagesPath": "/home/matuesz/.nuget/packages/",
-        "outputPath": "/home/matuesz/Desktop/C#/Library/Library/obj/",
+        "projectPath": "C:\\Users\\Mateusz\\Desktop\\Project\\Library\\Library\\Library.csproj",
+        "packagesPath": "C:\\Users\\Mateusz\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Mateusz\\Desktop\\Project\\Library\\Library\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "/home/matuesz/.nuget/NuGet/NuGet.Config"
+          "C:\\Users\\Mateusz\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net7.0"
@@ -41,6 +41,18 @@
             "MySql.Data": {
               "target": "Package",
               "version": "[8.0.33, )"
+            },
+            "Newtonsoft.Json": {
+              "target": "Package",
+              "version": "[13.0.3, )"
+            },
+            "PasswordGenerator": {
+              "target": "Package",
+              "version": "[2.1.0, )"
+            },
+            "RandomNameGeneratorLibrary": {
+              "target": "Package",
+              "version": "[1.2.2, )"
             }
           },
           "imports": [
@@ -59,7 +71,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/lib/dotnet/sdk/7.0.105/RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.302\\RuntimeIdentifierGraph.json"
         }
       }
     }

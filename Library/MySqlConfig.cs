@@ -7,7 +7,7 @@ namespace LoginSystem
 {
     public class MySqlConfig
     {
-        string conectionString = "";
+        string connectionString = "";
         public MySqlConnection ?connection = null;
         public string server = "localhost";
         public string user = "root";
@@ -21,28 +21,28 @@ namespace LoginSystem
         {
             try
             {
-                conectionString = "SERVER=" + server + ";" + "DATABASE=" + databaseName + ";" + "UID=" + user + ";" + "PASSWORD=" + password + ";";
-                connection = new MySqlConnection(conectionString);
+                connectionString = "SERVER=" + server + ";" + "DATABASE=" + databaseName + ";" + "UID=" + user + ";" + "PASSWORD=" + password + ";";
+                connection = new MySqlConnection(connectionString);
                 connection.Open();
                 Console.WriteLine($"Connection successful. Server version: {connection.ServerVersion}");
-                connection.Close();
             }
-            catch (Exception e)
+            catch (MySqlException e)
             {
                 Console.WriteLine(e.Message);
             }
+        }
+        public void Disconnect()
+        {
+            connection?.Close();
         }
         public void ExecuteNonQuerySql(string sqlCommand)
         {
             try
             {
-                MySqlConnection connection = new MySqlConnection(conectionString);
                 MySqlCommand mySqlCommand = new MySqlCommand(sqlCommand, connection);
-                connection.Open();
                 mySqlCommand.ExecuteNonQuery();
-                connection.Close();
             }
-            catch (Exception e)
+            catch (MySqlException e)
             {
                 Console.WriteLine(e.Message);
             }
@@ -52,20 +52,15 @@ namespace LoginSystem
             MySqlDataReader ?dataReader = null;
             try
             {
-                MySqlConnection connection = new MySqlConnection(conectionString);
                 MySqlCommand mySqlCommand = new MySqlCommand(sqlCommand, connection);
-                connection.Open();
                 dataReader = mySqlCommand.ExecuteReader();
                 if(!dataReader.HasRows)
                     Console.WriteLine("Username and password don't match");
-                else
-                    Console.WriteLine("Login Successful");
                 while(dataReader.Read())
                 {
                     ReadSingleRow((IDataRecord)dataReader);
                 }
                 dataReader.Close();
-                connection.Close();
             }
             catch(Exception e)
             {
@@ -86,17 +81,18 @@ namespace LoginSystem
             MySqlDataReader ?dataReader = ExecuteQuerySql(sqlCommand);
             if (dataReader == null)
                 return;
+            Console.WriteLine("Login Successful");
         }
-        public void Register(string ?name, string ?surname, string ?username, string ?password)
+        public void Register(User user)
         {
-            string sqlCommand = $@"INSERT INTO `user_info` (`id`, `names`, `username`, `password`)
-                VALUES (NULL, '{name} {surname}', '{username}', '{password}');";
+            string sqlCommand = $@"INSERT INTO `user_info` (`names`, `username`, `password`)
+                VALUES ('{user.name} {user.surname}', '{user.username}', '{user.password}');";
             ExecuteNonQuerySql(sqlCommand);
         }
         public void AddBookIndex(Book book)
         {
-            string sqlCommand = $@"INSERT INTO `books` (`id`, `title`, `author`, `description`, `edition`, `publisher`, `release_year`, `description`)
-                VALUES (NULL, '{book.title}', '{book.author}', '{book.description}', '{book.edition}', '{book.publisher}', '{book.releaseYear}', '{book.description}');";
+            string sqlCommand = $@"INSERT INTO `books` (`title`, `authors`, `publishers`, `release_date`)
+                VALUES ('{book.title}', '{book.authors}', '{book.publishers}', '{book.publish_date}');";
             ExecuteNonQuerySql(sqlCommand);
         }
     }
