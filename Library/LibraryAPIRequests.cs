@@ -9,7 +9,6 @@ namespace WebRequests
     {
         public static async Task<Book> GetBookFromAPI(HttpClient client, string key){
             Dictionary<string, APIResponse> ?output;
-            Book book = new Book();
             try
             {
                 HttpResponseMessage response = await client.GetAsync($"https://openlibrary.org/api/books?bibkeys={key}&jscmd=details&format=json");
@@ -21,16 +20,23 @@ namespace WebRequests
             {
                 Console.WriteLine("\nException Caught!");
                 Console.WriteLine("Message :{0} ", e.Message);
-                return book;
+                return new Book();
             }
             if(output == null)
-            {
-                return book;
-            }
-            if(!output.ContainsKey(key))
-                return book;
+                return new Book();
+            if(output.ContainsKey(key) == false)
+                return new Book();
             APIResponse value;
             output.TryGetValue(key, out value);
+            if(value.details.authors==null)
+                return new Book();
+            if(value.details.publish_date==null)
+                return new Book();
+            if(value.details.publishers==null)
+                return new Book();
+            if(value.details.title==null)
+                return new Book();    
+            Book book = new Book();
             foreach(Person author in value.details.authors)
             {
                 book.authors += author.name;
@@ -40,7 +46,23 @@ namespace WebRequests
                 book.publishers = publisher;
             }
             book.title = value.details.title;
-            book.publish_date = value.details.publish_date;
+            DateTime parsedDate = new DateTime();
+            // API uses both strings and DateTimes in this property for some reason
+            // so it's converted to DateTime
+            if(value.details.publish_date.Length >= 5)
+            {
+                try{
+                    parsedDate = DateTime.Parse(value.details.publish_date);
+                }
+                catch(Exception e)
+                {
+                    Console.WriteLine(e);
+                    return new Book();
+                }
+            }
+            else
+                DateTime.TryParseExact(value.details.publish_date, "yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out parsedDate);
+            book.publish_date = parsedDate;
             return book;
         }
         public static async Task<string> GetRandomBookFromAPI(HttpClient client)
@@ -58,7 +80,7 @@ namespace WebRequests
             {
                 Console.WriteLine("\nException Caught!");
                 Console.WriteLine("Message :{0} ", e.Message);
-                return null;
+                return isbn;
             }
             try
             {
@@ -71,7 +93,7 @@ namespace WebRequests
             {
                 Console.WriteLine("\nException Caught!");
                 Console.WriteLine("Message :{0} ", e.Message);
-                return null;
+                return isbn;
             }
             if(output.isbn_13 != null)
             {
@@ -83,7 +105,7 @@ namespace WebRequests
         {
             using HttpResponseMessage response = await client.GetAsync($"https://openlibrary.org/random");
             response.EnsureSuccessStatusCode();
-            string uri = response.RequestMessage.RequestUri.ToString();
+            string ?uri = response?.RequestMessage?.RequestUri?.ToString();
             if(uri == null)
             {
                 Console.WriteLine("No Url found");

@@ -11,11 +11,13 @@ namespace DatabaseUtils
         {
             string command = @"CREATE TABLE `user_info`
             (`id` int NOT NULL AUTO_INCREMENT,
-            `names` varchar(255),
-            `username` varchar(255) NOT NULL UNIQUE,
+            `name` varchar(255) NOT NULL,
+            `surname` varchar(255) NOT NULL,
+            `username` varchar(255) NOT NULL,
             `password` varchar(255) NOT NULL,
             PRIMARY KEY (id));";
             config.ExecuteNonQuerySql(command);
+            Console.WriteLine("Users table was generated.");
         }
         public static void CreateBookDataTable(MySqlConfig config)
         {
@@ -24,10 +26,23 @@ namespace DatabaseUtils
             `title` varchar(255) NOT NULL,
             `authors` varchar(255) NOT NULL,
             `publishers` varchar(255) NOT NULL,
-            `release_date` date,
+            `release_date` DATETIME,
+            `status` int NOT NULL,
             PRIMARY KEY (id));";
             config.ExecuteNonQuerySql(command);
+            Console.WriteLine("Books table was generated.");
         }
+        public static void CreateRentingDataTable(MySqlConfig config)
+        {
+            string command = @"CREATE TABLE `book_rent` 
+            (`book_id` int NOT NULL,
+            `user_id` int NOT NULL,
+            `rent_date` DATE NOT NULL,
+            `return_date` DATE);";
+            config.ExecuteNonQuerySql(command);
+            Console.WriteLine("Renting table was generated.");
+        }
+        
         public static void ClearTable(MySqlConfig config)
         {
             string command = @"DROP TABLE `user_info`";
@@ -51,6 +66,11 @@ namespace DatabaseUtils
             while(number > 0)
             {
                 Book book = await Utils.GenerateBookData(client);
+                if(book.authors == null)
+                {
+                    book = await Utils.GenerateBookData(client);
+                }
+                Console.WriteLine(book.ToString());
                 config.AddBookIndex(book);
                 number--;
             }

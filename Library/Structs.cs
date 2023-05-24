@@ -2,16 +2,24 @@ namespace Structs
 {
     public struct Book
     {
-        // API uses both strings and DateTimes in this property for some reason
         public int id {get; set;}
         public string title {get; set;}
         public string authors {get; set;}
         public DateTime publish_date {get; set;}
         public string publishers {get; set;}
+        public BookStatus status {get; set;}
 
         public override string ToString() =>
-            $"Title:{title}, Author:{authors}, Publish Date:{publish_date}, Publisher:{publishers}";
+            $"ID:{id}, Title:{title}, Author:{authors}, Publish Date:{publish_date}, Publisher:{publishers}, Status:{status}";
     }
+    public enum BookStatus
+    {
+        Error = -1,
+        Open,
+        Rent,
+        Unavailable
+    }
+
     public struct User
     {
         public int id {get; set;}
@@ -27,17 +35,17 @@ namespace Structs
     }
     public struct APIResponse
     {
-        public APIResponseDetails details;
+        public APIResponseDetails details {get; set;}
     }
     public struct APIResponseDetails
     {
-        public Person[] authors;
-        public string[] publishers;
-        public string title;
-        public DateTime publish_date; 
+        public Person[] authors {get; set;}
+        public string[] publishers {get; set;}
+        public string title {get; set;}
+        public string publish_date {get; set;}
     }
     public struct APIResponseRandomBook
     {
-        public string[] isbn_13;
+        public string[] isbn_13 {get; set;}
     }
 }

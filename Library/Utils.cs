@@ -23,16 +23,23 @@ namespace Utilities
             Book book = new Book();
             string key = await Utils.GetISBN13FromAPI(client);
             book = await LibraryAPIRequests.GetBookFromAPI(client, key);
-            Console.WriteLine(book.ToString());
+            if(book.authors == "")
+            {
+                return await LibraryAPIRequests.GetBookFromAPI(client, key);
+            }
+            Console.WriteLine($"Generated book: {book.ToString()}");
             return book;
         }
         public static async Task<string> GetISBN13FromAPI(HttpClient client)
         {
-            string ?isbn13 = null;
-            while(isbn13 == null)
+            string? isbn13 = null;
+
+            isbn13 = await LibraryAPIRequests.GetRandomBookFromAPI(client);
+            if (isbn13 == "")
             {
-                isbn13 = await LibraryAPIRequests.GetRandomBookFromAPI(client);
+                return await GetISBN13FromAPI(client);
             }
+            Console.WriteLine($"Generated ISBN: {isbn13}");
             return isbn13;
         }
     }

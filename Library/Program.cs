@@ -15,8 +15,11 @@ namespace LibraryDatabaseProgram
         public const string Register = "register";
         public const string CreateUserInfo = "createUserInfo";
         public const string CreateBookInfo = "createBookInfo";
+        public const string CreateBookRentInfo = "createBookRentInfo";
         public const string ClearAll = "clear"; 
         public const string AddBook = "addBook";
+        public const string RentBook = "rentBook";
+        public const string ReturnBook = "returnBook";
         public const string PopulateUsers = "populateUser";
         public const string PopulateBooks = "populateBook";
         public const string Test = "test";
@@ -66,6 +69,9 @@ namespace LibraryDatabaseProgram
                     case Commands.CreateBookInfo:
                         CreateBooksTables(config);
                         break;
+                    case Commands.CreateBookRentInfo:
+                        CreateBookRentInfo(config);
+                        break;
                     case Commands.ClearAll:
                         ClearTables(config);
                         break;
@@ -75,8 +81,11 @@ namespace LibraryDatabaseProgram
                     case Commands.PopulateBooks:
                         AddRandomBooks(client, config);
                         break;
+                    case Commands.RentBook:
+                        RentBook(config);
+                        break;
                     case Commands.Test:
-                        GetRandomISBN13(client);
+                        ReturnBook(config);
                         break;
                     default:
                         Console.WriteLine($"Command not recognized. Use {Commands.Help} for list of commands");
@@ -122,7 +131,7 @@ namespace LibraryDatabaseProgram
         {
             string input = "";
             bool isValid = false;
-            char[] bannedCharacters = {' ', '/', '<'};// TO DO: Add full list of characters
+            char[] bannedCharacters = {' ', '/', '<', '>'};// TO DO: Add full list of characters
             int maxCharacterLimit = 50;// This might be better as argument of the method
             while(!isValid)
             {
@@ -183,16 +192,30 @@ namespace LibraryDatabaseProgram
                 task.Wait();
             }
         }
-        
         public static void GetRandomISBN13(HttpClient client)
         {
             Task task = Utils.GetISBN13FromAPI(client);
-            try{
-                task.Wait();
-            }
-            catch(Exception e){
-                Console.WriteLine(e);
-            }
+            task.Wait();
+        }
+        public static void CreateBookRentInfo(MySqlConfig config)
+        {
+            InitializeDatabase.CreateRentingDataTable(config);
+        }
+        public static void RentBook(MySqlConfig config)
+        {
+            Console.WriteLine("Give book id");
+            int bookIndex = Convert.ToInt32(Console.ReadLine());
+            Console.WriteLine("Give user id");
+            int userIndex = Convert.ToInt32(Console.ReadLine());
+            DateTime now = DateTime.Now;
+            config.RentBook(userIndex, bookIndex, now);
+        }
+        public static void ReturnBook(MySqlConfig config)
+        {
+            Console.WriteLine("Give book id");
+            int bookIndex = Convert.ToInt32(Console.ReadLine());
+            DateTime now = DateTime.Now;
+            config.ReturnBook(bookIndex, now);
         }
     }
 }
