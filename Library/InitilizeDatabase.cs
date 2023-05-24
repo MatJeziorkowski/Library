@@ -1,4 +1,3 @@
-using System;
 using LoginSystem;
 using Structs;
 using Utilities;
@@ -45,11 +44,9 @@ namespace DatabaseUtils
             Console.WriteLine("Renting table was generated.");
         }
         
-        public static void ClearTable(MySqlConfig config)
+        public static void ClearTable(MySqlConfig config, string tableName)
         {
-            string command = @"DROP TABLE `user_info`";
-            config.ExecuteNonQuerySql(command);
-            command = @"DROP TABLE `books`";
+            string command = $@"DROP TABLE `{tableName}`";
             config.ExecuteNonQuerySql(command);
         }
 
