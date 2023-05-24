@@ -2,6 +2,7 @@ using System;
 using System.Data;
 using Structs;
 using MySql.Data.MySqlClient;
+using Utilities;
 
 namespace LoginSystem
 {
@@ -80,8 +81,9 @@ namespace LoginSystem
         }
         public void AddBookIndex(Book book)
         {
+            string formattedDate = Utils.FormatDateToMySQL(book.publish_date);
             string sqlCommand = $@"INSERT INTO `books` (`title`, `authors`, `publishers`, `release_date`, `status`)
-                VALUES ('{book.title}', '{book.authors}', '{book.publishers}', '{book.publish_date}', '0');";
+                VALUES ('{book.title}', '{book.authors}', '{book.publishers}', '{formattedDate}', '0');";
             ExecuteNonQuerySql(sqlCommand);
             string sqlQuery = $"SELECT id FROM `books` WHERE title='{book.title}'";
         }
@@ -99,10 +101,11 @@ namespace LoginSystem
                 Console.WriteLine("Book is unavailable");
                 return;
             }
+            string formattedDate = Utils.FormatDateToMySQL(date);
             string sqlCommand = $@"INSERT INTO `book_rent` (`book_id`, `user_id`, `rent_date`)
-            VALUES ('{bookID}', '{userID}', '{date}')";
-            ExecuteNonQuerySql(sqlCommand);
+            VALUES ('{bookID}', '{userID}', '{formattedDate}')";
             UpdateBookStatus(bookID, (int)BookStatus.Rent);
+            ExecuteNonQuerySql(sqlCommand);
         }
         public void ReturnBook(int bookID, DateTime date)
         {
@@ -117,7 +120,24 @@ namespace LoginSystem
                 Console.WriteLine("Book is not currently rent");
                 return;
             }
+            int rentServiceID = -1;
+            string sqlQuery = $"SELECT id FROM `book_rent` WHERE book_id={bookID} AND return_date IS NULL";
+            MySqlDataReader ?dataReader = ExecuteQuerySql(sqlQuery);
+            if(dataReader == null)
+            {
+                Console.WriteLine("Book does not appear in rent data base");
+                return;
+            }
+            while(dataReader.Read())
+            {
+                rentServiceID = dataReader.GetInt32(0);
+            }
+            dataReader.Close();
+            string formattedDate = Utils.FormatDateToMySQL(date);
+            string sqlCommandInsertDate = $"UPDATE `book_rent` SET return_date='{formattedDate}' WHERE id={rentServiceID}";
+            ExecuteNonQuerySql(sqlCommandInsertDate);
             UpdateBookStatus(bookID, (int)BookStatus.Open);
+            Console.WriteLine($"Book {bookID} has been returned");
         }
         public void UpdateBookStatus(int bookID, int status)
         {

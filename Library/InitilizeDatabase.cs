@@ -35,10 +35,12 @@ namespace DatabaseUtils
         public static void CreateRentingDataTable(MySqlConfig config)
         {
             string command = @"CREATE TABLE `book_rent` 
-            (`book_id` int NOT NULL,
+            (`id` int NOT NULL AUTO_INCREMENT,
+            `book_id` int NOT NULL,
             `user_id` int NOT NULL,
             `rent_date` DATE NOT NULL,
-            `return_date` DATE);";
+            `return_date` DATE,
+            PRIMARY KEY (id));";
             config.ExecuteNonQuerySql(command);
             Console.WriteLine("Renting table was generated.");
         }

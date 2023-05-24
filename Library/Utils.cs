@@ -18,6 +18,11 @@ namespace Utilities
             user.password = pass.Next();
             return user;
         }
+        public static string FormatDateToMySQL(DateTime date)
+        {    
+            string formatForMySql = date.ToString("yyyy-MM-dd HH:mm");
+            return formatForMySql;
+        }
         public static async Task<Book> GenerateBookData(HttpClient client)
         {
             Book book = new Book();
